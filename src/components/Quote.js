@@ -11,9 +11,9 @@ class Quote extends Component {
           <div className="container">
             <div className="quoteBox">
               <FontAwesomeIcon icon={faQuoteLeft} className="icon rndColor" color="red" size="4x" />
-              <span className="quote rndColor writing"></span>
+              <span className="quote rndColor writing">{this.props.quote}</span>
             </div>
-            <div className="author writing"></div>
+            <div className="author writing">{this.props.author}</div>
           </div>
       )
   }

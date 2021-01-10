@@ -10,27 +10,24 @@ class Button extends Component {
     constructor(props){
         super(props)
         this.state= {
-            quote: this.props.quote
+            quote: ''
         }
         this.btnHandler = this.btnHandler.bind(this)
     }
     btnHandler() {
-        this.props.btnAjax(json); 
+        this.props.request(json); 
         this.props.colorHandler();
-        this.setState({
-            quote: this.props.quote
-        })
+
     }
     render() {
-
         return (
             <div className="btnBox">
-                <BtnIcon quote={this.state.quote}/>
+                <BtnIcon quote={this.props.quote}/>
                 <BtnNew btnHandler={this.btnHandler}/>
             </div>
         )
     }
 }
-Button.defaultProps = {name: 'CamperBot'};
+Button.defaultProps = {quote: 'CamperBot'};
 
 export default Button

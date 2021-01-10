@@ -5,8 +5,8 @@ import jQuery from 'jquery'
 
 const $ = (window.$=window.jQuery=jQuery);
 var currentQuote = "",
-  currentAuthor = "",
-  quotesData ;
+  currentAuthor = "";
+
 let json = "https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json"
 const COLOR = [
     "#e1d5c4",
@@ -25,49 +25,55 @@ const COLOR = [
     ]
 
 class Box extends Component{
-  constructor(props) {
-      super(props)
-      this.state = {
-          quote: currentQuote,
-          author: currentAuthor
-      }
-      this.setColor = this.setColor.bind(this)
-      this.ajaxRequest = this.ajaxRequest.bind(this)
-  }
-  setColor() {
-      let rdnIndex = Math.floor(Math.random()*13);
-      $("body").css("background-color", COLOR[rdnIndex]);
-      $(".rndColor").css("color", COLOR[rdnIndex])
-      $(".rndColorBorder").css("border", `2px solid ${COLOR[rdnIndex]}`)
-  }
-  ajaxRequest(json){
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() { 
-          if(this.readyState === 4 && this.status === 200){
-              quotesData = JSON.parse(xhr.response);      
-              let rdnIdx = Math.floor(Math.random()*102)
-              currentQuote = quotesData.quotes[rdnIdx].quote;
-              currentAuthor = "- " + quotesData.quotes[rdnIdx].author;
+    constructor(props) {
+        super(props)
+        this.state = {
+            quote: currentQuote,
+            author: currentAuthor
+        }
+        this.setColor = this.setColor.bind(this)
+        this.request = this.request.bind(this)
+    }
+    componentDidMount() {
+        fetch(json)
+            .then(function(result){
+                return result.json();
+            })
+            .then( (quotesData) => {
+                let rdnIdx = Math.floor(Math.random()*102);
+                this.setState({
+                    quote : quotesData.quotes[rdnIdx].quote,
+                    author : "- " + quotesData.quotes[rdnIdx].author
+                })
+            })
+    }
 
-              document.querySelector(".quote").innerHTML = currentQuote
-              document.querySelector(".author").innerHTML = currentAuthor
-          }
-      };
-
-      xhr.open("GET", json, true); //(요청 유형, 서버주소, 비동기여부)
-      xhr.send();
-      this.setState({
-          quote: currentQuote,
-          author: currentAuthor
-      })
-  }
+    setColor() {
+        let rdnIndex = Math.floor(Math.random()*13);
+        $("body").css("background-color", COLOR[rdnIndex]);
+        $(".rndColor").css("color", COLOR[rdnIndex])
+        $(".rndColorBorder").css("border", `2px solid ${COLOR[rdnIndex]}`)
+    }
+    request(json){
+        fetch(json)
+        .then(function(result){
+            return result.json();
+        })
+        .then( (quotesData) => {
+            let rdnIdx = Math.floor(Math.random()*102);
+            this.setState({
+                quote : quotesData.quotes[rdnIdx].quote,
+                author : "- " + quotesData.quotes[rdnIdx].author
+            })
+        })
+    }   
     render(){
         
         return (
             <div className="box">
                 <div>
-                    <Quote/>
-                    <Button quote={this.state.quote + this.state.author} colorHandler={this.setColor} btnAjax={this.ajaxRequest} />
+                    <Quote quote={this.state.quote} author={this.state.author}/>
+                    <Button quote={this.state.quote + this.state.author} colorHandler={this.setColor} request={this.request} />
                 </div>
             </div>
         )
@@ -84,8 +90,6 @@ function setColor() {
 
 $(document).ready(() => {
     setColor();
-    let box = new Box();
-    box.ajaxRequest(json);
 
     })
 
