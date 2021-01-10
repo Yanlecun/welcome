@@ -21,10 +21,8 @@ class BtnIcon extends Component {
 }
 
 function getRegexp(str) {
-    console.log(str)
     str = str.replace(regExp, "%20")
     str = JSON.stringify(str)
-    console.log(str)
     return `https://twitter.com/intent/tweet?hashtags=quotes&text=${str}`
 }
 

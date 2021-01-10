@@ -4,8 +4,6 @@ import Button from "./Button.js"
 import jQuery from 'jquery'
 
 const $ = (window.$=window.jQuery=jQuery);
-var currentQuote = "",
-  currentAuthor = "";
 
 let json = "https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json"
 const COLOR = [
@@ -28,8 +26,9 @@ class Box extends Component{
     constructor(props) {
         super(props)
         this.state = {
-            quote: currentQuote,
-            author: currentAuthor
+            quote: '',
+            author: '',
+            color: ''
         }
         this.setColor = this.setColor.bind(this)
         this.request = this.request.bind(this)
@@ -61,14 +60,18 @@ class Box extends Component{
         })
         .then( (quotesData) => {
             let rdnIdx = Math.floor(Math.random()*102);
+            let rdnIdxColor = Math.floor(Math.random()*13);
             this.setState({
                 quote : quotesData.quotes[rdnIdx].quote,
-                author : "- " + quotesData.quotes[rdnIdx].author
+                author : "- " + quotesData.quotes[rdnIdx].author,
+                color : COLOR[rdnIdxColor]
             })
         })
+        .then( () => {
+            this.setColor();
+        });
     }   
     render(){
-        
         return (
             <div className="box">
                 <div>
@@ -90,11 +93,6 @@ function setColor() {
 
 $(document).ready(() => {
     setColor();
-
     })
-
-
-    
-
 
 export default Box;
