@@ -25,32 +25,6 @@ const COLOR = [
     ]
 
 class Box extends Component{
-  componentDidMount() {
-    var xhr = new XMLHttpRequest();//XMLHttp 객체 만들기
-    xhr.onreadystatechange = function() { //콜백함수 쓰기
-        if(this.readyState === 4 && this.status === 200){//readyState 4. 데이터를 전부 받은 상태, 200 요청이 성공이면    
-            //데이터로 해야 할 일 하기    
-            quotesData = JSON.parse(xhr.response);      
-            let rdnIdx = Math.floor(Math.random()*102)
-            currentQuote = quotesData.quotes[rdnIdx].quote;
-            currentAuthor = "- " + quotesData.quotes[rdnIdx].author;
-
-            document.querySelector(".quote").innerHTML = currentQuote
-            document.querySelector(".author").innerHTML = currentAuthor
-        }
-    };
-
-    /*
-    GET : 대부분의 요청에 사용, 서버에서 무언가 얻기 위해 사용
-    POST : 서버에 데이터를 보내기 위해 웹 form과 자주 함께 자주 사용, 서버에 저장, 삭제, 업데이트 될 데이터를 보낼때 사용
-    */
-    xhr.open("GET", json, true); //(요청 유형, 서버주소, 비동기여부)
-    xhr.send(); //POST의 경우 인자로 파라미터
-    this.setState({
-        quote: currentQuote,
-        author: currentAuthor
-    })
-  }
   constructor(props) {
       super(props)
       this.state = {
@@ -67,7 +41,25 @@ class Box extends Component{
       $(".rndColorBorder").css("border", `2px solid ${COLOR[rdnIndex]}`)
   }
   ajaxRequest(json){
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() { 
+          if(this.readyState === 4 && this.status === 200){
+              quotesData = JSON.parse(xhr.response);      
+              let rdnIdx = Math.floor(Math.random()*102)
+              currentQuote = quotesData.quotes[rdnIdx].quote;
+              currentAuthor = "- " + quotesData.quotes[rdnIdx].author;
 
+              document.querySelector(".quote").innerHTML = currentQuote
+              document.querySelector(".author").innerHTML = currentAuthor
+          }
+      };
+
+      xhr.open("GET", json, true); //(요청 유형, 서버주소, 비동기여부)
+      xhr.send();
+      this.setState({
+          quote: currentQuote,
+          author: currentAuthor
+      })
   }
     render(){
         
@@ -82,37 +74,7 @@ class Box extends Component{
     }
 }
 
-let xhr = new XMLHttpRequest();
-xhr.open('GET', json);
-xhr.send();
-xhr.onload = () => {
-  quotesData = JSON.parse(xhr.response);
-}
-// let quotesData1;
-// function getQuotes(func) {
-//     return $.ajax({
-//       headers: {
-//         Accept: 'application/json'
-//       },
-//       url:
-//         'https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json',
-//       success: function (jsonQuotes) {
-//         if (typeof jsonQuotes === 'string') {
-//           quotesData1 = JSON.parse(jsonQuotes);
-//         }
-//       }
-//     });
-//   }
-//   function getRandomQuote() {
-//     return quotesData1.quotes[
-//       Math.floor(Math.random() * quotesData1.quotes.length)
-//     ];
-    
-//   }
-//   function getQuote() {
-//     let randomQuote = getRandomQuote();
-//     console.log(randomQuote)
-//   }
+
 function setColor() {
     let rdnIndex = Math.floor(Math.random()*13);
     $("body").css("background-color", COLOR[rdnIndex]);
@@ -121,12 +83,9 @@ function setColor() {
 }
 
 $(document).ready(() => {
-    // getQuotes().then(() => {
-    //     getQuote();
-    //   });
     setColor();
-    //let box = new Box();
-   // box.ajaxRequest(json);
+    let box = new Box();
+    box.ajaxRequest(json);
 
     })
 
